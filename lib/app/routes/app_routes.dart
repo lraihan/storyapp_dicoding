@@ -1,12 +1,13 @@
+// ignore_for_file: constant_identifier_names
+
 part of 'app_pages.dart';
-// DO NOT EDIT. This is code generated via package:get_cli/get_cli.dart
 
 abstract class Routes {
   Routes._();
-  static const HOME = _Paths.HOME;
-}
-
-abstract class _Paths {
-  _Paths._();
+  static const SPLASH = '/';
+  static const LOGIN = '/login';
+  static const REGISTER = '/register';
   static const HOME = '/home';
+  static const STORY_DETAIL = '/story-detail';
+  static const ADD_STORY = '/add-story';
 }
