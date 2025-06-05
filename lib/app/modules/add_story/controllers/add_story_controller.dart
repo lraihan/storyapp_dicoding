@@ -35,7 +35,6 @@ class AddStoryController extends GetxController {
         selectedImage.value = File(image.path);
       }
     } else {
-
       if (Get.context != null) {
         ScaffoldMessenger.of(Get.context!).showSnackBar(
           const SnackBar(
@@ -48,7 +47,6 @@ class AddStoryController extends GetxController {
   }
 
   Future<void> pickImageFromGallery() async {
-
     final permission = await Permission.photos.request();
     if (permission.isGranted) {
       final XFile? image = await _picker.pickImage(
@@ -60,7 +58,6 @@ class AddStoryController extends GetxController {
         selectedImage.value = File(image.path);
       }
     } else {
-
       final storagePermission = await Permission.storage.request();
       if (storagePermission.isGranted) {
         final XFile? image = await _picker.pickImage(
@@ -96,7 +93,7 @@ class AddStoryController extends GetxController {
               leading: const Icon(Icons.camera_alt),
               title: const Text('Camera'),
               onTap: () {
-                Navigator.of(context).pop();
+                context.pop();
                 pickImageFromCamera();
               },
             ),
@@ -104,7 +101,7 @@ class AddStoryController extends GetxController {
               leading: const Icon(Icons.photo_library),
               title: const Text('Gallery'),
               onTap: () {
-                Navigator.of(context).pop();
+                context.pop();
                 pickImageFromGallery();
               },
             ),
@@ -146,7 +143,6 @@ class AddStoryController extends GetxController {
   }
 
   void goBackToHome(BuildContext context) {
-
     context.go(Routes.HOME);
   }
 
