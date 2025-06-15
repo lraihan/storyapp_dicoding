@@ -4,22 +4,17 @@ import 'package:go_router/go_router.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../controllers/auth_controller.dart';
 import '../../../routes/app_pages.dart';
-
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
-
   @override
   State<LoginView> createState() => _LoginViewState();
 }
-
 class _LoginViewState extends State<LoginView> {
   late AuthController controller;
-
   @override
   void initState() {
     super.initState();
     controller = Get.put(AuthController());
-
     ever(controller.loginMessage, (String message) {
       if (message.isNotEmpty && mounted) {
         final isSuccess = message.contains('successful');
@@ -34,27 +29,20 @@ class _LoginViewState extends State<LoginView> {
         );
       }
     });
-
     ever(controller.isLoginSuccess, (bool isSuccess) {
       if (isSuccess && mounted) {
-
         controller.isLoginSuccess.value = false;
-
         Future.delayed(const Duration(milliseconds: 500), () {
           if (mounted) {
-
             context.go(Routes.HOME);
-
           }
         });
       }
     });
   }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -63,7 +51,6 @@ class _LoginViewState extends State<LoginView> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 60),
-
               Center(
                 child: Column(
                   children: [
@@ -96,7 +83,6 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ),
               const SizedBox(height: 48),
-
               TextFormField(
                 controller: controller.emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -110,7 +96,6 @@ class _LoginViewState extends State<LoginView> {
                 validator: controller.validateEmail,
               ),
               const SizedBox(height: 16),
-
               Obx(() => TextFormField(
                     controller: controller.passwordController,
                     obscureText: !controller.isPasswordVisible.value,
@@ -130,7 +115,6 @@ class _LoginViewState extends State<LoginView> {
                     validator: controller.validatePassword,
                   )),
               const SizedBox(height: 32),
-
               Obx(() => ElevatedButton(
                     onPressed: controller.isLoading.value ? null : controller.login,
                     style: ElevatedButton.styleFrom(
@@ -147,15 +131,13 @@ class _LoginViewState extends State<LoginView> {
                           )
                         : Text(l10n.loginButton),
                   )),
-
               const Spacer(),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(l10n.dontHaveAccount),
                   TextButton(
-                    onPressed: () => context.go(Routes.REGISTER),
+                    onPressed: () => context.push(Routes.REGISTER),
                     child: Text(l10n.register),
                   ),
                 ],

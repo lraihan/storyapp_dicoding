@@ -4,22 +4,19 @@ import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../routes/app_pages.dart';
+import '../../../widgets/story_map_widget.dart';
+import '../../../widgets/animations.dart';
 import '../controllers/story_detail_controller.dart';
-
 class StoryDetailView extends StatelessWidget {
   final String storyId;
-
   const StoryDetailView({super.key, required this.storyId});
-
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(StoryDetailController());
     final l10n = AppLocalizations.of(context)!;
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.setStoryId(storyId);
     });
-
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -42,7 +39,6 @@ class StoryDetailView extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           }
-
           if (controller.hasError.value) {
             return Center(
               child: Column(
@@ -75,14 +71,12 @@ class StoryDetailView extends StatelessWidget {
               ),
             );
           }
-
           final story = controller.story.value;
           if (story == null) {
             return Center(
               child: Text(l10n.noData),
             );
           }
-
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -159,6 +153,25 @@ class StoryDetailView extends StatelessWidget {
                   story.description,
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
+                if (story.hasLocation) ...[
+                  const SizedBox(height: 24),
+                  Text(
+                    l10n.storyLocation,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 12),
+                  SlideInAnimation(
+                    beginOffset: const Offset(0, 0.3),
+                    child: StoryMapWidget(
+                      lat: story.lat!,
+                      lng: story.lon!,
+                      height: 200,
+                      title: story.name,
+                    ),
+                  ),
+                ],
               ],
             ),
           );

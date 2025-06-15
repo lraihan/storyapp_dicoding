@@ -11,7 +11,7 @@ import 'app/routes/app_pages.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
-  AppConfig.setFlavor(AppFlavor.paid);
+  AppConfig.setFlavor(AppFlavor.free);
   Get.put(PreferencesService());
   Get.put(ApiService());
   Get.put(LocationService());
@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
       supportedLocales: AppLocalizations.supportedLocales,
       locale: Locale(preferencesService.getLanguage()),
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
         fontFamily: 'Nunito',
       ),

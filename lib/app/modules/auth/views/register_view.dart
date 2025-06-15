@@ -4,23 +4,17 @@ import 'package:go_router/go_router.dart';
 import 'package:storyapp_dicoding/app/data/shared/constants.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../controllers/auth_controller.dart';
-import '../../../routes/app_pages.dart';
-
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
-
   @override
   State<RegisterView> createState() => _RegisterViewState();
 }
-
 class _RegisterViewState extends State<RegisterView> {
   late AuthController controller;
-
   @override
   void initState() {
     super.initState();
     controller = Get.put(AuthController());
-
     ever(controller.registerMessage, (String message) {
       if (message.isNotEmpty && mounted) {
         final isSuccess = message.contains('successful');
@@ -36,11 +30,9 @@ class _RegisterViewState extends State<RegisterView> {
       }
     });
   }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -51,7 +43,16 @@ class _RegisterViewState extends State<RegisterView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(height: 60),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () => context.pop(),
+                        icon: const Icon(Icons.arrow_back),
+                        tooltip: 'Back to Login',
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
                   Center(
                     child: Column(
                       children: [
@@ -150,7 +151,7 @@ class _RegisterViewState extends State<RegisterView> {
                     children: [
                       Text(l10n.alreadyHaveAccount),
                       TextButton(
-                        onPressed: () => context.go(Routes.LOGIN),
+                        onPressed: () => context.pop(),
                         child: Text(l10n.login),
                       ),
                     ],

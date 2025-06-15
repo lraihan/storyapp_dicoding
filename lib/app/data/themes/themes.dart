@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:storyapp_dicoding/app/data/themes/color_themes.dart';
-
 ThemeData themeData = ThemeData(
   splashColor: Colors.transparent,
   scaffoldBackgroundColor: whiteColor.shade300,

@@ -1,2 +1,2 @@
-export 'story_model.dart';
-export 'auth_model.dart';
+export 'story.dart';
+export 'user.dart';

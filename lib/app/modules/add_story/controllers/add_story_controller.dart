@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,22 +5,36 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../data/service/api_service.dart';
+import '../../../data/service/location_service.dart';
+import '../../../data/service/image_compression_service.dart';
+import '../../../data/shared/app_config.dart';
 import '../../../routes/app_pages.dart';
-
+import '../../../data/models/location_coordinate.dart';
+import '../../../widgets/google_maps_location_picker.dart';
+import '../../home/controllers/home_controller.dart';
 class AddStoryController extends GetxController {
   final ApiService _apiService = Get.find<ApiService>();
+  final LocationService _locationService = Get.find<LocationService>();
   final ImagePicker _picker = ImagePicker();
-
   final descriptionController = TextEditingController();
   final selectedImage = Rxn<File>();
+  final selectedLocation = Rxn<LocationCoordinate>();
+  final locationAddress = ''.obs;
   final isLoading = false.obs;
-
+  final isLocationAvailable = false.obs;
+  @override
+  void onInit() {
+    super.onInit();
+    _checkLocationAvailability();
+  }
   @override
   void onClose() {
     descriptionController.dispose();
     super.onClose();
   }
-
+  Future<void> _checkLocationAvailability() async {
+    isLocationAvailable.value = await _locationService.isLocationAvailable();
+  }
   Future<void> pickImageFromCamera() async {
     final permission = await Permission.camera.request();
     if (permission.isGranted) {
@@ -30,9 +42,8 @@ class AddStoryController extends GetxController {
         source: ImageSource.camera,
         imageQuality: 80,
       );
-
       if (image != null) {
-        selectedImage.value = File(image.path);
+        await _processSelectedImage(File(image.path));
       }
     } else {
       if (Get.context != null) {
@@ -45,7 +56,6 @@ class AddStoryController extends GetxController {
       }
     }
   }
-
   Future<void> pickImageFromGallery() async {
     final permission = await Permission.photos.request();
     if (permission.isGranted) {
@@ -53,9 +63,8 @@ class AddStoryController extends GetxController {
         source: ImageSource.gallery,
         imageQuality: 80,
       );
-
       if (image != null) {
-        selectedImage.value = File(image.path);
+        await _processSelectedImage(File(image.path));
       }
     } else {
       final storagePermission = await Permission.storage.request();
@@ -64,9 +73,8 @@ class AddStoryController extends GetxController {
           source: ImageSource.gallery,
           imageQuality: 80,
         );
-
         if (image != null) {
-          selectedImage.value = File(image.path);
+          await _processSelectedImage(File(image.path));
         }
       } else {
         if (Get.context != null) {
@@ -80,7 +88,61 @@ class AddStoryController extends GetxController {
       }
     }
   }
-
+  Future<void> _processSelectedImage(File imageFile) async {
+    try {
+      if (Get.context != null) {
+        showDialog(
+          context: Get.context!,
+          barrierDismissible: false,
+          builder: (context) => const Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      }
+      if (!ImageCompressionService.isFileSizeValid(imageFile)) {
+        final originalSize = ImageCompressionService.getFileSizeString(imageFile);
+        final compressedFile = await ImageCompressionService.compressImageToSize(imageFile);
+        if (compressedFile != null) {
+          final compressedSize = ImageCompressionService.getFileSizeString(compressedFile);
+          selectedImage.value = compressedFile;
+          if (Get.context != null) {
+            Navigator.of(Get.context!).pop();
+            ScaffoldMessenger.of(Get.context!).showSnackBar(
+              SnackBar(
+                content: Text('Image compressed from $originalSize to $compressedSize'),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
+        } else {
+          if (Get.context != null) {
+            Navigator.of(Get.context!).pop();
+            ScaffoldMessenger.of(Get.context!).showSnackBar(
+              const SnackBar(
+                content: Text('Failed to compress image. Please try a smaller image or different format.'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        }
+      } else {
+        selectedImage.value = imageFile;
+        if (Get.context != null) {
+          Navigator.of(Get.context!).pop();
+        }
+      }
+    } catch (e) {
+      if (Get.context != null) {
+        Navigator.of(Get.context!).pop();
+        ScaffoldMessenger.of(Get.context!).showSnackBar(
+          SnackBar(
+            content: Text('Error processing image: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
   void showImageSourceDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -110,14 +172,12 @@ class AddStoryController extends GetxController {
       ),
     );
   }
-
   String? validateDescription(String? value) {
     if (value == null || value.isEmpty) {
       return 'pleaseEnterDescription'.tr;
     }
     return null;
   }
-
   bool validateForm(BuildContext context) {
     if (selectedImage.value == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -128,7 +188,6 @@ class AddStoryController extends GetxController {
       );
       return false;
     }
-
     if (descriptionController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -138,25 +197,39 @@ class AddStoryController extends GetxController {
       );
       return false;
     }
-
     return true;
   }
-
   void goBackToHome(BuildContext context) {
+    try {
+      final homeController = Get.find<HomeController>();
+      homeController.refreshStories();
+    } catch (e) {
+      // Handle potential error when finding HomeController
+      // This can happen if the controller is not registered
+      debugPrint('Error finding HomeController: $e');
+    }
     context.go(Routes.HOME);
   }
-
   Future<void> uploadStory(BuildContext context) async {
     if (!validateForm(context)) return;
-
+    if (selectedImage.value != null && !ImageCompressionService.isFileSizeValid(selectedImage.value!)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              'Image size (${ImageCompressionService.getFileSizeString(selectedImage.value!)}) exceeds 1MB limit. Please select a smaller image.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
     isLoading.value = true;
-
     try {
       final response = await _apiService.addStory(
         description: descriptionController.text.trim(),
         photo: selectedImage.value!,
+        lat: selectedLocation.value?.latitude,
+        lon: selectedLocation.value?.longitude,
       );
-
       if (!response.error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -164,28 +237,76 @@ class AddStoryController extends GetxController {
             backgroundColor: Colors.green,
           ),
         );
-
         descriptionController.clear();
         selectedImage.value = null;
-
+        selectedLocation.value = null;
+        locationAddress.value = '';
         goBackToHome(context);
       } else {
+        String errorMessage = response.message;
+        if (errorMessage.toLowerCase().contains('payload') && errorMessage.toLowerCase().contains('size')) {
+          errorMessage = 'Image is too large. Please select a smaller image.';
+        }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(response.message),
+            content: Text(errorMessage),
             backgroundColor: Colors.red,
           ),
         );
       }
     } catch (e) {
+      String errorMessage = 'uploadFailed'.tr;
+      if (e.toString().toLowerCase().contains('payload') || e.toString().toLowerCase().contains('size')) {
+        errorMessage = 'Image is too large. Please select a smaller image.';
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('uploadFailed'.tr),
+          content: Text(errorMessage),
           backgroundColor: Colors.red,
         ),
       );
     } finally {
       isLoading.value = false;
     }
+  }
+  Future<void> pickLocation(BuildContext context) async {
+    if (!AppConfig.isPaidVersion) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('locationFeatureNotAvailable'.tr),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+    final result = await Navigator.of(context).push<LocationCoordinate>(
+      MaterialPageRoute(
+        builder: (context) => GoogleMapsLocationPicker(
+          onLocationSelected: (location) {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop(location);
+            }
+          },
+          initialLocation: selectedLocation.value,
+        ),
+      ),
+    );
+    if (result != null) {
+      selectedLocation.value = result;
+      _loadLocationAddress();
+    }
+  }
+  Future<void> _loadLocationAddress() async {
+    if (selectedLocation.value != null) {
+      final address = await _locationService.getAddressFromCoordinates(
+        selectedLocation.value!.latitude,
+        selectedLocation.value!.longitude,
+      );
+      locationAddress.value = address ?? 'unknownLocation'.tr;
+    }
+  }
+  void removeLocation() {
+    selectedLocation.value = null;
+    locationAddress.value = '';
   }
 }

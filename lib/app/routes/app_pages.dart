@@ -11,31 +11,24 @@ import '../modules/story_detail/views/story_detail_view.dart';
 import '../modules/story_detail/controllers/story_detail_controller.dart';
 import '../modules/add_story/views/add_story_view.dart';
 import '../modules/add_story/controllers/add_story_controller.dart';
-
 part 'app_routes.dart';
-
 class AppRouter {
   static final _apiService = Get.find<ApiService>();
-
   static final GoRouter router = GoRouter(
     initialLocation: Routes.SPLASH,
     redirect: (context, state) {
       final isLoggedIn = _apiService.isLoggedIn();
       final isAuthRoute = state.matchedLocation == Routes.LOGIN || state.matchedLocation == Routes.REGISTER;
       final isSplash = state.matchedLocation == Routes.SPLASH;
-
       if (isSplash) {
         return null;
       }
-
       if (!isLoggedIn && !isAuthRoute) {
         return Routes.LOGIN;
       }
-
       if (isLoggedIn && isAuthRoute) {
         return Routes.HOME;
       }
-
       return null;
     },
     routes: [

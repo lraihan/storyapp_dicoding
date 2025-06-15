@@ -3,14 +3,12 @@ class User {
   final String name;
   final String email;
   final String? token;
-
   User({
     required this.id,
     required this.name,
     required this.email,
     this.token,
   });
-
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['userId'] ?? json['id'] ?? '',
@@ -19,7 +17,6 @@ class User {
       token: json['token'],
     );
   }
-
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -29,7 +26,6 @@ class User {
     };
   }
 }
-
 class Story {
   final String id;
   final String name;
@@ -38,7 +34,6 @@ class Story {
   final DateTime createdAt;
   final double? lat;
   final double? lon;
-
   Story({
     required this.id,
     required this.name,
@@ -48,7 +43,6 @@ class Story {
     this.lat,
     this.lon,
   });
-
   factory Story.fromJson(Map<String, dynamic> json) {
     return Story(
       id: json['id'] ?? '',
@@ -60,7 +54,6 @@ class Story {
       lon: json['lon']?.toDouble(),
     );
   }
-
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -73,18 +66,15 @@ class Story {
     };
   }
 }
-
 class ApiResponse<T> {
   final bool error;
   final String message;
   final T? data;
-
   ApiResponse({
     required this.error,
     required this.message,
     this.data,
   });
-
   factory ApiResponse.fromJson(
     Map<String, dynamic> json,
     T Function(Map<String, dynamic>)? fromJsonT,
@@ -100,16 +90,13 @@ class ApiResponse<T> {
     );
   }
 }
-
 class LoginRequest {
   final String email;
   final String password;
-
   LoginRequest({
     required this.email,
     required this.password,
   });
-
   Map<String, dynamic> toJson() {
     return {
       'email': email,
@@ -117,18 +104,15 @@ class LoginRequest {
     };
   }
 }
-
 class RegisterRequest {
   final String name;
   final String email;
   final String password;
-
   RegisterRequest({
     required this.name,
     required this.email,
     required this.password,
   });
-
   Map<String, dynamic> toJson() {
     return {
       'name': name,

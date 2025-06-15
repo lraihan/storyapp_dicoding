@@ -1,16 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
-
-import 'package:storyapp_dicoding/app/data/models/story_model.dart';
-
+import 'package:storyapp_dicoding/app/data/models/story.dart';
 void main() {
   setUp(() {
-
     Get.reset();
   });
-
   test('Story model serialization works correctly', () {
-
     final storyJson = {
       'id': 'test-id',
       'name': 'Test User',
@@ -20,7 +15,6 @@ void main() {
       'lat': 1.0,
       'lon': 2.0,
     };
-
     final story = Story.fromJson(storyJson);
     expect(story.id, equals('test-id'));
     expect(story.name, equals('Test User'));
@@ -28,7 +22,6 @@ void main() {
     expect(story.photoUrl, equals('https://example.com/photo.jpg'));
     expect(story.lat, equals(1.0));
     expect(story.lon, equals(2.0));
-
     final backToJson = story.toJson();
     expect(backToJson['id'], equals('test-id'));
     expect(backToJson['name'], equals('Test User'));
@@ -37,7 +30,6 @@ void main() {
     expect(backToJson['lat'], equals(1.0));
     expect(backToJson['lon'], equals(2.0));
   });
-
   test('StoryResponse parsing works correctly', () {
     final responseJson = {
       'error': false,
@@ -59,7 +51,6 @@ void main() {
         }
       ]
     };
-
     final response = StoryResponse.fromJson(responseJson);
     expect(response.error, equals(false));
     expect(response.message, equals('Stories fetched successfully'));
@@ -67,9 +58,7 @@ void main() {
     expect(response.listStory[0].id, equals('story-1'));
     expect(response.listStory[1].id, equals('story-2'));
   });
-
   tearDown(() {
-
     Get.reset();
   });
 }

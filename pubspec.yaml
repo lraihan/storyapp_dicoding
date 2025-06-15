@@ -46,6 +46,25 @@ dependencies:
   get_storage: ^2.1.1
   intl: ^0.20.2
   permission_handler: ^11.3.1
+  
+  # Map and location dependencies
+  google_maps_flutter: ^2.10.0
+  geolocator: ^13.0.2
+  geocoding: ^3.0.0
+  
+  # Code generation dependencies
+  json_annotation: ^4.9.0
+  
+  # Pagination and UI enhancements
+  infinite_scroll_pagination: ^4.1.0
+  shimmer: ^3.0.0
+  
+  # Image processing and compression
+  flutter_image_compress: ^2.3.0
+  path_provider: ^2.1.4
+  
+  # Build variants
+  flutter_flavorizr: ^2.2.3
 
 dev_dependencies:
   flutter_test:
@@ -57,6 +76,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  json_serializable: ^6.8.0
+  build_runner: ^2.4.13
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

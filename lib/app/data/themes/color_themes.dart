@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:storyapp_dicoding/app/data/themes/static_colors.dart';
-
 MaterialColor primaryColor = MaterialColor(AppColors.primary500.toARGB32(), const <int, Color>{
   50: AppColors.primary50,
   100: AppColors.primary100,
@@ -13,7 +12,6 @@ MaterialColor primaryColor = MaterialColor(AppColors.primary500.toARGB32(), cons
   800: AppColors.primary800,
   900: AppColors.primary900,
 });
-
 MaterialColor secondaryColor = MaterialColor(AppColors.secondary500.toARGB32(), <int, Color>{
   50: AppColors.secondary50,
   100: AppColors.secondary100,
@@ -26,7 +24,6 @@ MaterialColor secondaryColor = MaterialColor(AppColors.secondary500.toARGB32(), 
   800: AppColors.secondary800,
   900: AppColors.secondary900,
 });
-
 MaterialColor neutralColor = MaterialColor(AppColors.neutral500.toARGB32(), <int, Color>{
   50: AppColors.neutral50,
   100: AppColors.neutral100,
@@ -39,7 +36,6 @@ MaterialColor neutralColor = MaterialColor(AppColors.neutral500.toARGB32(), <int
   800: AppColors.neutral800,
   900: AppColors.neutral900,
 });
-
 MaterialColor whiteColor = MaterialColor(AppColors.white500.toARGB32(), <int, Color>{
   50: AppColors.white50,
   100: AppColors.white100,
@@ -52,7 +48,6 @@ MaterialColor whiteColor = MaterialColor(AppColors.white500.toARGB32(), <int, Co
   800: AppColors.white800,
   900: AppColors.white900,
 });
-
 MaterialColor blackColor = MaterialColor(AppColors.black500.toARGB32(), <int, Color>{
   50: AppColors.black50,
   100: AppColors.black100,
@@ -65,7 +60,6 @@ MaterialColor blackColor = MaterialColor(AppColors.black500.toARGB32(), <int, Co
   800: AppColors.black800,
   900: AppColors.black900,
 });
-
 MaterialColor errorColor = MaterialColor(AppColors.error500.toARGB32(), <int, Color>{
   50: AppColors.error50,
   100: AppColors.error100,
@@ -78,7 +72,6 @@ MaterialColor errorColor = MaterialColor(AppColors.error500.toARGB32(), <int, Co
   800: AppColors.error800,
   900: AppColors.error900,
 });
-
 MaterialColor positiveColor = MaterialColor(AppColors.positive500.toARGB32(), <int, Color>{
   50: AppColors.positive50,
   100: AppColors.positive100,
