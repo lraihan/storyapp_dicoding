@@ -1,7 +1,9 @@
+import '../config/environment_config.dart';
+
 class ApiConfig {
-  static const String baseUrl = 'https://story-api.dicoding.dev/v1';
-  static const bool googleMapsEnabled = false;
-  static const String googleMapsApiKey = 'AIzaSyDummy_Key_For_Development_Only';
+  static String get baseUrl => EnvironmentConfig.apiBaseUrl;
+  static bool get googleMapsEnabled => EnvironmentConfig.isGoogleMapsConfigured;
+  static String get googleMapsApiKey => EnvironmentConfig.googleMapsApiKey;
   static const bool debugMode = true;
   static const int defaultPageSize = 10;
   static const int maxRetryAttempts = 3;

@@ -3,13 +3,15 @@ import 'package:dio/dio.dart';
 import 'package:get_storage/get_storage.dart';
 import '../models/user.dart';
 import '../models/story.dart';
+import '../../config/environment_config.dart';
+
 class ApiService {
-  static const String baseUrl = 'https://story-api.dicoding.dev/v1';
   late final Dio _dio;
   final GetStorage _storage = GetStorage();
+
   ApiService() {
     _dio = Dio();
-    _dio.options.baseUrl = baseUrl;
+    _dio.options.baseUrl = EnvironmentConfig.apiBaseUrl;
     _dio.options.connectTimeout = const Duration(seconds: 30);
     _dio.options.receiveTimeout = const Duration(seconds: 30);
     _dio.interceptors.add(
@@ -52,6 +54,7 @@ class ApiService {
       );
     }
   }
+
   Future<ApiResponse<String>> register(RegisterRequest request) async {
     try {
       final response = await _dio.post('/register', data: request.toJson());
@@ -67,6 +70,7 @@ class ApiService {
       );
     }
   }
+
   Future<StoryResponse> getStories({int page = 1, int size = 10, int location = 0}) async {
     try {
       final response = await _dio.get('/stories', queryParameters: {
@@ -83,6 +87,7 @@ class ApiService {
       );
     }
   }
+
   Future<ApiResponse<Story>> getStoryDetail(String id) async {
     try {
       final response = await _dio.get('/stories/$id');
@@ -100,6 +105,7 @@ class ApiService {
       );
     }
   }
+
   Future<ApiResponse<String>> addStory({
     required String description,
     required File photo,
@@ -143,13 +149,16 @@ class ApiService {
       );
     }
   }
+
   Future<void> logout() async {
     _storage.remove('token');
     _storage.remove('user');
   }
+
   String? getToken() {
     return _storage.read('token');
   }
+
   User? getCurrentUser() {
     final userData = _storage.read('user');
     if (userData != null) {
@@ -157,6 +166,7 @@ class ApiService {
     }
     return null;
   }
+
   bool isLoggedIn() {
     return getToken() != null;
   }

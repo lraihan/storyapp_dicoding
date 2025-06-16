@@ -63,6 +63,9 @@ dependencies:
   flutter_image_compress: ^2.3.0
   path_provider: ^2.1.4
   
+  # Environment variables
+  flutter_dotenv: ^5.1.0
+  
   # Build variants
   flutter_flavorizr: ^2.2.3
 
@@ -95,6 +98,7 @@ flutter:
   assets: 
     - assets/images/
     - assets/illustration/
+    - .env
   fonts: 
     - family: Nunito
       fonts: 

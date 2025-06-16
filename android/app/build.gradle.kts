@@ -5,6 +5,8 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+import java.util.Properties
+
 android {
     namespace = "com.example.storyapp_dicoding"
     compileSdk = flutter.compileSdkVersion
@@ -28,6 +30,17 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        
+        // Read Google Maps API key from local.properties or environment variable
+        val localProperties = Properties()
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            localPropertiesFile.inputStream().use { localProperties.load(it) }
+        }
+        val googleMapsApiKey = localProperties.getProperty("GOOGLE_MAPS_API_KEY") 
+            ?: System.getenv("GOOGLE_MAPS_API_KEY") 
+            ?: "YOUR_API_KEY_HERE"
+        manifestPlaceholders += mapOf("GOOGLE_MAPS_API_KEY" to googleMapsApiKey)
     }
 
     buildTypes {
