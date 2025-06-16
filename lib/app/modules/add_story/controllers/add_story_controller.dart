@@ -10,8 +10,8 @@ import '../../../data/service/image_compression_service.dart';
 import '../../../data/shared/app_config.dart';
 import '../../../routes/app_pages.dart';
 import '../../../data/models/location_coordinate.dart';
-import '../../../widgets/google_maps_location_picker.dart';
 import '../../home/controllers/home_controller.dart';
+
 class AddStoryController extends GetxController {
   final ApiService _apiService = Get.find<ApiService>();
   final LocationService _locationService = Get.find<LocationService>();
@@ -27,14 +27,17 @@ class AddStoryController extends GetxController {
     super.onInit();
     _checkLocationAvailability();
   }
+
   @override
   void onClose() {
     descriptionController.dispose();
     super.onClose();
   }
+
   Future<void> _checkLocationAvailability() async {
     isLocationAvailable.value = await _locationService.isLocationAvailable();
   }
+
   Future<void> pickImageFromCamera() async {
     final permission = await Permission.camera.request();
     if (permission.isGranted) {
@@ -56,6 +59,7 @@ class AddStoryController extends GetxController {
       }
     }
   }
+
   Future<void> pickImageFromGallery() async {
     final permission = await Permission.photos.request();
     if (permission.isGranted) {
@@ -88,6 +92,7 @@ class AddStoryController extends GetxController {
       }
     }
   }
+
   Future<void> _processSelectedImage(File imageFile) async {
     try {
       if (Get.context != null) {
@@ -106,7 +111,7 @@ class AddStoryController extends GetxController {
           final compressedSize = ImageCompressionService.getFileSizeString(compressedFile);
           selectedImage.value = compressedFile;
           if (Get.context != null) {
-            Navigator.of(Get.context!).pop();
+            Get.context!.pop();
             ScaffoldMessenger.of(Get.context!).showSnackBar(
               SnackBar(
                 content: Text('Image compressed from $originalSize to $compressedSize'),
@@ -116,7 +121,7 @@ class AddStoryController extends GetxController {
           }
         } else {
           if (Get.context != null) {
-            Navigator.of(Get.context!).pop();
+            Get.context!.pop();
             ScaffoldMessenger.of(Get.context!).showSnackBar(
               const SnackBar(
                 content: Text('Failed to compress image. Please try a smaller image or different format.'),
@@ -128,12 +133,12 @@ class AddStoryController extends GetxController {
       } else {
         selectedImage.value = imageFile;
         if (Get.context != null) {
-          Navigator.of(Get.context!).pop();
+          Get.context!.pop();
         }
       }
     } catch (e) {
       if (Get.context != null) {
-        Navigator.of(Get.context!).pop();
+        Get.context!.pop();
         ScaffoldMessenger.of(Get.context!).showSnackBar(
           SnackBar(
             content: Text('Error processing image: $e'),
@@ -143,6 +148,7 @@ class AddStoryController extends GetxController {
       }
     }
   }
+
   void showImageSourceDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -172,12 +178,14 @@ class AddStoryController extends GetxController {
       ),
     );
   }
+
   String? validateDescription(String? value) {
     if (value == null || value.isEmpty) {
       return 'pleaseEnterDescription'.tr;
     }
     return null;
   }
+
   bool validateForm(BuildContext context) {
     if (selectedImage.value == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -199,17 +207,17 @@ class AddStoryController extends GetxController {
     }
     return true;
   }
+
   void goBackToHome(BuildContext context) {
     try {
       final homeController = Get.find<HomeController>();
       homeController.refreshStories();
     } catch (e) {
-      // Handle potential error when finding HomeController
-      // This can happen if the controller is not registered
       debugPrint('Error finding HomeController: $e');
     }
     context.go(Routes.HOME);
   }
+
   Future<void> uploadStory(BuildContext context) async {
     if (!validateForm(context)) return;
     if (selectedImage.value != null && !ImageCompressionService.isFileSizeValid(selectedImage.value!)) {
@@ -269,6 +277,7 @@ class AddStoryController extends GetxController {
       isLoading.value = false;
     }
   }
+
   Future<void> pickLocation(BuildContext context) async {
     if (!AppConfig.isPaidVersion) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -279,23 +288,22 @@ class AddStoryController extends GetxController {
       );
       return;
     }
-    final result = await Navigator.of(context).push<LocationCoordinate>(
-      MaterialPageRoute(
-        builder: (context) => GoogleMapsLocationPicker(
-          onLocationSelected: (location) {
-            if (Navigator.of(context).canPop()) {
-              Navigator.of(context).pop(location);
-            }
-          },
-          initialLocation: selectedLocation.value,
-        ),
-      ),
-    );
+
+    final params = <String, String>{};
+    if (selectedLocation.value != null) {
+      params['lat'] = selectedLocation.value!.latitude.toString();
+      params['lng'] = selectedLocation.value!.longitude.toString();
+    }
+
+    final result = await context.push<LocationCoordinate>(
+        Uri(path: '/location-picker', queryParameters: params.isEmpty ? null : params).toString());
+
     if (result != null) {
       selectedLocation.value = result;
       _loadLocationAddress();
     }
   }
+
   Future<void> _loadLocationAddress() async {
     if (selectedLocation.value != null) {
       final address = await _locationService.getAddressFromCoordinates(
@@ -305,6 +313,7 @@ class AddStoryController extends GetxController {
       locationAddress.value = address ?? 'unknownLocation'.tr;
     }
   }
+
   void removeLocation() {
     selectedLocation.value = null;
     locationAddress.value = '';

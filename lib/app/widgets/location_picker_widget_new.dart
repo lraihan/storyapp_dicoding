@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import '../data/service/location_service.dart';
 import '../data/models/location_coordinate.dart';
+
 class LocationPickerWidget extends StatefulWidget {
   final Function(LocationCoordinate) onLocationSelected;
   final LocationCoordinate? initialLocation;
@@ -14,6 +15,7 @@ class LocationPickerWidget extends StatefulWidget {
   @override
   State<LocationPickerWidget> createState() => _LocationPickerWidgetState();
 }
+
 class _LocationPickerWidgetState extends State<LocationPickerWidget> {
   final LocationService _locationService = Get.find<LocationService>();
   LocationCoordinate? _selectedLocation;
@@ -32,12 +34,14 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
       _loadAddress(_selectedLocation!);
     }
   }
+
   @override
   void dispose() {
     _latController.dispose();
     _lngController.dispose();
     super.dispose();
   }
+
   Future<void> _loadAddress(LocationCoordinate location) async {
     setState(() {
       _isLoadingAddress = true;
@@ -62,6 +66,7 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
       }
     }
   }
+
   Future<void> _getCurrentLocation() async {
     setState(() {
       _isLoadingLocation = true;
@@ -102,6 +107,7 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
       );
     }
   }
+
   void _onCoordinatesChanged() {
     final latText = _latController.text.trim();
     final lngText = _lngController.text.trim();
@@ -116,6 +122,7 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
       }
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -169,13 +176,14 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
             const SizedBox(height: 12),
             Row(
               children: [
-                Expanded(
+                Flexible(
                   child: TextField(
                     controller: _latController,
                     decoration: InputDecoration(
                       labelText: 'latitude'.tr,
                       hintText: '-6.200000',
                       border: const OutlineInputBorder(),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     ),
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
@@ -185,13 +193,14 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                Expanded(
+                Flexible(
                   child: TextField(
                     controller: _lngController,
                     decoration: InputDecoration(
                       labelText: 'longitude'.tr,
                       hintText: '106.816666',
                       border: const OutlineInputBorder(),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     ),
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
@@ -247,6 +256,8 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: Colors.grey[600],
                             ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
                       ),
                     ],
                   ),

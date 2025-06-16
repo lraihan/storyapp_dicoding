@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../data/shared/app_config.dart';
 import '../controllers/add_story_controller.dart';
 import '../../../routes/app_pages.dart';
+
 class AddStoryView extends GetView<AddStoryController> {
   const AddStoryView({super.key});
   @override
@@ -36,8 +37,12 @@ class AddStoryView extends GetView<AddStoryController> {
                       child: GestureDetector(
                         onTap: () => controller.showImageSourceDialog(context),
                         child: Container(
-                          height: 200,
+                          height: MediaQuery.of(context).size.height * 0.25,
                           width: double.infinity,
+                          constraints: const BoxConstraints(
+                            minHeight: 150,
+                            maxHeight: 300,
+                          ),
                           decoration: BoxDecoration(
                             border: Border.all(
                               color: Colors.grey,
@@ -99,13 +104,14 @@ class AddStoryView extends GetView<AddStoryController> {
                               color: Colors.blue[700],
                             ),
                             const SizedBox(width: 8),
-                            Expanded(
+                            Flexible(
                               child: Text(
                                 'File size: ${controller.selectedImage.value!.lengthSync() > 0 ? '${(controller.selectedImage.value!.lengthSync() / (1024 * 1024)).toStringAsFixed(2)} MB' : 'Unknown'}',
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.blue[700],
                                 ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             if (controller.selectedImage.value!.lengthSync() > 1000000) ...[
@@ -238,12 +244,14 @@ class AddStoryView extends GetView<AddStoryController> {
                                   size: 20,
                                 ),
                                 const SizedBox(width: 8),
-                                Expanded(
+                                Flexible(
                                   child: Text(
                                     controller.locationAddress.value.isEmpty
                                         ? 'loadingAddress'.tr
                                         : controller.locationAddress.value,
                                     style: Theme.of(context).textTheme.bodyMedium,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
                                   ),
                                 ),
                                 IconButton(
@@ -258,6 +266,8 @@ class AddStoryView extends GetView<AddStoryController> {
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                     color: Colors.grey[600],
                                   ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
                             ),
                           ],
                         ),

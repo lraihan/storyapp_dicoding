@@ -11,7 +11,11 @@ import '../modules/story_detail/views/story_detail_view.dart';
 import '../modules/story_detail/controllers/story_detail_controller.dart';
 import '../modules/add_story/views/add_story_view.dart';
 import '../modules/add_story/controllers/add_story_controller.dart';
+import '../widgets/google_maps_location_picker.dart';
+import '../widgets/fullscreen_map_view.dart';
+import '../data/models/location_coordinate.dart';
 part 'app_routes.dart';
+
 class AppRouter {
   static final _apiService = Get.find<ApiService>();
   static final GoRouter router = GoRouter(
@@ -70,6 +74,40 @@ class AppRouter {
         builder: (context, state) {
           Get.lazyPut(() => AddStoryController());
           return const AddStoryView();
+        },
+      ),
+      GoRoute(
+        path: Routes.LOCATION_PICKER,
+        builder: (context, state) {
+          final lat = double.tryParse(state.uri.queryParameters['lat'] ?? '');
+          final lng = double.tryParse(state.uri.queryParameters['lng'] ?? '');
+          LocationCoordinate? initialLocation;
+          if (lat != null && lng != null) {
+            initialLocation = LocationCoordinate(lat, lng);
+          }
+          return GoogleMapsLocationPicker(
+            onLocationSelected: (location) {
+              context.pop(location);
+            },
+            initialLocation: initialLocation,
+          );
+        },
+      ),
+      GoRoute(
+        path: Routes.MAP_FULLSCREEN,
+        builder: (context, state) {
+          final lat = double.parse(state.uri.queryParameters['lat']!);
+          final lng = double.parse(state.uri.queryParameters['lng']!);
+          final title = state.uri.queryParameters['title'];
+          final description = state.uri.queryParameters['description'];
+          final address = state.uri.queryParameters['address'];
+
+          return FullScreenMapView(
+            location: LocationCoordinate(lat, lng),
+            title: title,
+            description: description,
+            address: address,
+          );
         },
       ),
     ],

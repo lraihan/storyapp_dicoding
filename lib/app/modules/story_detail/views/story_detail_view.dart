@@ -7,6 +7,7 @@ import '../../../routes/app_pages.dart';
 import '../../../widgets/story_map_widget.dart';
 import '../../../widgets/animations.dart';
 import '../controllers/story_detail_controller.dart';
+
 class StoryDetailView extends StatelessWidget {
   final String storyId;
   const StoryDetailView({super.key, required this.storyId});
@@ -126,14 +127,22 @@ class StoryDetailView extends StatelessWidget {
                     width: double.infinity,
                     fit: BoxFit.cover,
                     placeholder: (context, url) => Container(
-                      height: 300,
+                      height: MediaQuery.of(context).size.height * 0.35,
+                      constraints: const BoxConstraints(
+                        minHeight: 200,
+                        maxHeight: 400,
+                      ),
                       color: Colors.grey[300],
                       child: const Center(
                         child: CircularProgressIndicator(),
                       ),
                     ),
                     errorWidget: (context, url, error) => Container(
-                      height: 300,
+                      height: MediaQuery.of(context).size.height * 0.35,
+                      constraints: const BoxConstraints(
+                        minHeight: 200,
+                        maxHeight: 400,
+                      ),
                       color: Colors.grey[300],
                       child: const Center(
                         child: Icon(Icons.error),
@@ -167,7 +176,7 @@ class StoryDetailView extends StatelessWidget {
                     child: StoryMapWidget(
                       lat: story.lat!,
                       lng: story.lon!,
-                      height: 200,
+                      height: MediaQuery.of(context).size.height * 0.25,
                       title: story.name,
                     ),
                   ),

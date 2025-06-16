@@ -88,6 +88,7 @@ class _GoogleMapsDisplayState extends State<GoogleMapsDisplay> {
               rotateGesturesEnabled: widget.showFullScreen,
               tiltGesturesEnabled: widget.showFullScreen,
             ),
+
             if (widget.showFullScreen)
               Positioned(
                 top: 8,
@@ -112,6 +113,7 @@ class _GoogleMapsDisplayState extends State<GoogleMapsDisplay> {
                   ),
                 ),
               ),
+
             Positioned(
               bottom: 0,
               left: 0,
@@ -160,16 +162,14 @@ class _GoogleMapsDisplayState extends State<GoogleMapsDisplay> {
                         ],
                       )
                     else if (_address != null)
-                      Flexible(
-                        child: Text(
-                          _address!,
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 12,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                      Text(
+                        _address!,
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                   ],
                 ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import '../data/service/location_service.dart';
 import '../data/models/location_coordinate.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -44,8 +45,8 @@ class _GoogleMapsLocationPickerState extends State<GoogleMapsLocationPicker> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            if (Navigator.of(context).canPop()) {
-              Navigator.of(context).pop();
+            if (context.canPop()) {
+              context.pop();
             }
           },
         ),
@@ -53,7 +54,7 @@ class _GoogleMapsLocationPickerState extends State<GoogleMapsLocationPicker> {
           if (_selectedLocation != null)
             IconButton(
               onPressed: () {
-                if (Navigator.of(context).canPop()) {
+                if (context.canPop()) {
                   widget.onLocationSelected(_selectedLocation!);
                 }
               },
@@ -136,6 +137,8 @@ class _GoogleMapsLocationPickerState extends State<GoogleMapsLocationPicker> {
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: Colors.grey[600],
                           ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                     if (_isLoadingAddress)
                       const Padding(
@@ -166,7 +169,7 @@ class _GoogleMapsLocationPickerState extends State<GoogleMapsLocationPicker> {
                         Expanded(
                           child: OutlinedButton(
                             onPressed: () {
-                              Navigator.of(context).pop();
+                              context.pop();
                             },
                             child: Text(l10n.cancel),
                           ),
